@@ -15,6 +15,13 @@ import java.util.Optional
 @RequestMapping("/api/quotes")
 class QuoteController (@Autowired private val quoteService: QuoteService){
 
+    @GetMapping("")
+    fun getAllQuotes(): ResponseEntity<List<Quote>> {
+        val quoteList = quoteService.getAllQuotes()
+        return if (quoteList.isEmpty()) ResponseEntity(HttpStatus.NOT_FOUND)
+        else ResponseEntity(quoteList, HttpStatus.OK)
+    }
+
     @GetMapping("/{id}")
     fun getQuoteById(@PathVariable("id") id: String): ResponseEntity<Optional<Quote>> {
         val quote = quoteService.getQuoteById(id)

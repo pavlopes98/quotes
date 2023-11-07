@@ -37,6 +37,14 @@ internal class QuoteServiceTest {
         __v = 0
     )
 
+    private val quote2 = Quote(
+        _id = "2",
+        quoteText = "xyz",
+        quoteAuthor = "abc",
+        quoteGenre = "lmnop",
+        __v = 0
+    )
+
     @BeforeEach
     fun setup() {
         quoteService = QuoteService(quoteRepository, restTemplate)
@@ -128,5 +136,24 @@ internal class QuoteServiceTest {
         val response = quoteService.getQuoteById(quoteAuthor)
 
         assertThat(response.isEmpty).isTrue
+    }
+
+    @Test
+    fun `getAllQuotes should return all quotes when it exists`() {
+        `when`(quoteRepository.findAll()).thenReturn(listOf(quote1, quote2))
+
+        val response = quoteService.getAllQuotes()
+
+        assertThat(response.isEmpty()).isFalse
+        assertThat(response).isEqualTo(listOf(quote1, quote2))
+    }
+
+    @Test
+    fun `getAllQuotes should return an empty list when it does not exist`() {
+        `when`(quoteRepository.findAll()).thenReturn(emptyList())
+
+        val response = quoteService.getAllQuotes()
+
+        assertThat(response.isEmpty()).isTrue
     }
 }

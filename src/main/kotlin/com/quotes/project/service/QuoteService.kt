@@ -30,4 +30,6 @@ class QuoteService (private val quoteRepository: QuoteRepository, private val re
     fun getQuoteById(id: String): Optional<Quote> = quoteRepository.findById(id)
 
     fun getQuoteByAuthor(author: String): Optional<List<Quote>> = quoteRepository.findByQuoteAuthor(author)
+
+    fun getAllQuotes(): List<Quote> = quoteRepository.findAll()
 }
