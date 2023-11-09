@@ -1,9 +1,11 @@
 package com.quotes.project.service
 
+import com.quotes.project.model.Quote
 import com.quotes.project.model.QuoteApiResponse
 import com.quotes.project.repository.QuoteRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import java.util.*
 
 @Service
 class QuoteService (private val quoteRepository: QuoteRepository, private val restTemplate: RestTemplate) {
@@ -24,4 +26,6 @@ class QuoteService (private val quoteRepository: QuoteRepository, private val re
             else -> throw Error("Error: Status Code ${response?.statusCode} - Could not load data from the URL")
         }
     }
+
+    fun getQuoteById(id: String): Optional<Quote> = quoteRepository.findById(id)
 }

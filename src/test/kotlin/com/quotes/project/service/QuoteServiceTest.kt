@@ -5,6 +5,7 @@ import com.quotes.project.model.Pagination
 import com.quotes.project.model.Quote
 import com.quotes.project.model.QuoteApiResponse
 import com.quotes.project.repository.QuoteRepository
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -14,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 import org.springframework.web.client.RestTemplate
+import java.util.*
 
 @ActiveProfiles("test")
 @SpringJUnitConfig
@@ -26,6 +28,14 @@ internal class QuoteServiceTest {
     private lateinit var restTemplate: RestTemplate
 
     private lateinit var quoteService: QuoteService
+
+    private val quote1 = Quote(
+        _id = "1",
+        quoteText = "abc",
+        quoteAuthor = "xyz",
+        quoteGenre = "lmnop",
+        __v = 0
+    )
 
     @BeforeEach
     fun setup() {
@@ -48,9 +58,7 @@ internal class QuoteServiceTest {
             message = "abcde",
             pagination = Pagination(currentPage = 1, nextPage = 2, totalPages = 3),
             totalQuotes = 10,
-            data = listOf(
-                Quote(_id = "1", quoteText = "abc", quoteAuthor = "xyz", quoteGenre = "lmnop", __v = 0)
-            )
+            data = listOf(quote1)
         )
 
         `when`(restTemplate.getForObject(url, QuoteApiResponse::class.java))
@@ -78,5 +86,26 @@ internal class QuoteServiceTest {
             .thenReturn(mockResponse)
 
         assertThrows<Error> { quoteService.loadDataFromURL(maxItems) }
+    }
+
+    @Test
+    fun `getQuoteById should return a quote when it exists`() {
+        `when`(quoteRepository.findById(quote1._id)).thenReturn(Optional.of(quote1))
+
+        val response = quoteService.getQuoteById(quote1._id)
+
+        assertThat(response.isPresent).isTrue
+        assertThat(response.get()).isEqualTo(quote1)
+    }
+
+    @Test
+    fun `getQuoteById should return an empty Optional when it does not exist`() {
+        val quoteId = "quoteId"
+
+        `when`(quoteRepository.findById(quoteId)).thenReturn(Optional.empty())
+
+        val response = quoteService.getQuoteById(quoteId)
+
+        assertThat(response.isEmpty).isTrue
     }
 }
