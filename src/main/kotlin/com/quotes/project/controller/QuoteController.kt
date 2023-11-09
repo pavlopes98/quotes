@@ -21,4 +21,11 @@ class QuoteController (@Autowired private val quoteService: QuoteService){
         return if (quote.isEmpty) ResponseEntity(HttpStatus.NOT_FOUND)
         else ResponseEntity(quote, HttpStatus.OK)
     }
+
+    @GetMapping("/author/{author}")
+    fun getQuotesByAuthor(@PathVariable("author") author: String): ResponseEntity<List<Quote>> {
+        val quoteList = quoteService.getQuoteByAuthor(author).orElse(null)
+        return if (quoteList == null) ResponseEntity(HttpStatus.NOT_FOUND)
+        else ResponseEntity(quoteList, HttpStatus.OK)
+    }
 }
