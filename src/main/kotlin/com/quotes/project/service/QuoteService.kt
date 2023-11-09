@@ -31,7 +31,7 @@ class QuoteService (private val quoteRepository: QuoteRepository, private val re
 
     fun getQuoteById(id: String): Optional<Quote> = quoteRepository.findById(id)
 
-    fun getQuoteByAuthor(author: String): Optional<List<Quote>> = quoteRepository.findByQuoteAuthor(author)
+    fun getQuoteByAuthor(author: String, pageable: Pageable): Page<Quote> = quoteRepository.findByQuoteAuthor(author, pageable)
 
     fun getAllQuotes(pageable: Pageable): Page<Quote> = quoteRepository.findAll(pageable)
 }

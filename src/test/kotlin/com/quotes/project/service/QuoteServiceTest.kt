@@ -121,23 +121,24 @@ internal class QuoteServiceTest {
 
     @Test
     fun `getQuoteByAuthor should return a quote when it exists`() {
-        `when`(quoteRepository.findByQuoteAuthor(quote1.quoteAuthor)).thenReturn(Optional.of(listOf(quote1)))
+        val pageRequest = PageRequest.of(0, 10)
+        `when`(quoteRepository.findByQuoteAuthor(quote1.quoteAuthor, pageRequest)).thenReturn(PageImpl(listOf(quote1)))
 
-        val response = quoteService.getQuoteByAuthor(quote1.quoteAuthor)
+        val response = quoteService.getQuoteByAuthor(quote1.quoteAuthor, pageRequest)
 
-        assertThat(response.isPresent).isTrue
-        assertThat(response.get()).isEqualTo(listOf(quote1))
+        assertThat(response.content).isEqualTo(listOf(quote1))
     }
 
     @Test
     fun `getQuoteByAuthor should return an empty Optional when it does not exist`() {
+        val pageRequest = PageRequest.of(0, 10)
         val quoteAuthor = "quoteAuthor1"
 
-        `when`(quoteRepository.findByQuoteAuthor(quoteAuthor)).thenReturn(Optional.empty())
+        `when`(quoteRepository.findByQuoteAuthor(quoteAuthor, pageRequest)).thenReturn(PageImpl(emptyList()))
 
-        val response = quoteService.getQuoteById(quoteAuthor)
+        val response = quoteService.getQuoteByAuthor(quoteAuthor, pageRequest)
 
-        assertThat(response.isEmpty).isTrue
+        assertThat(response.content.isEmpty()).isTrue
     }
 
     @Test

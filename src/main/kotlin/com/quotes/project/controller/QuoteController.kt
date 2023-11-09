@@ -32,9 +32,9 @@ class QuoteController (@Autowired private val quoteService: QuoteService){
     }
 
     @GetMapping("/author/{author}")
-    fun getQuotesByAuthor(@PathVariable("author") author: String): ResponseEntity<List<Quote>> {
-        val quoteList = quoteService.getQuoteByAuthor(author).orElse(null)
-        return if (quoteList == null) ResponseEntity(HttpStatus.NOT_FOUND)
-        else ResponseEntity(quoteList, HttpStatus.OK)
+    fun getQuotesByAuthor(@PathVariable("author") author: String, pageable: Pageable): ResponseEntity<Page<Quote>> {
+        val quotePage = quoteService.getQuoteByAuthor(author, pageable)
+        return if (quotePage.isEmpty) ResponseEntity(HttpStatus.NOT_FOUND)
+        else ResponseEntity(quotePage, HttpStatus.OK)
     }
 }
