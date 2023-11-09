@@ -3,6 +3,8 @@ package com.quotes.project.controller
 import com.quotes.project.model.Quote
 import com.quotes.project.service.QuoteService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,10 +18,10 @@ import java.util.Optional
 class QuoteController (@Autowired private val quoteService: QuoteService){
 
     @GetMapping("")
-    fun getAllQuotes(): ResponseEntity<List<Quote>> {
-        val quoteList = quoteService.getAllQuotes()
-        return if (quoteList.isEmpty()) ResponseEntity(HttpStatus.NOT_FOUND)
-        else ResponseEntity(quoteList, HttpStatus.OK)
+    fun getAllQuotes(pageable: Pageable): ResponseEntity<Page<Quote>> {
+        val quotePage = quoteService.getAllQuotes(pageable)
+        return if (quotePage.isEmpty) ResponseEntity(HttpStatus.NOT_FOUND)
+        else ResponseEntity(quotePage, HttpStatus.OK)
     }
 
     @GetMapping("/{id}")

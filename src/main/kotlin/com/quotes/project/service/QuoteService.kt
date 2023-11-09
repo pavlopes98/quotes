@@ -3,6 +3,8 @@ package com.quotes.project.service
 import com.quotes.project.model.Quote
 import com.quotes.project.model.QuoteApiResponse
 import com.quotes.project.repository.QuoteRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.util.*
@@ -31,5 +33,5 @@ class QuoteService (private val quoteRepository: QuoteRepository, private val re
 
     fun getQuoteByAuthor(author: String): Optional<List<Quote>> = quoteRepository.findByQuoteAuthor(author)
 
-    fun getAllQuotes(): List<Quote> = quoteRepository.findAll()
+    fun getAllQuotes(pageable: Pageable): Page<Quote> = quoteRepository.findAll(pageable)
 }

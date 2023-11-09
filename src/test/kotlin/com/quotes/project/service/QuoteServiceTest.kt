@@ -12,6 +12,8 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 import org.springframework.web.client.RestTemplate
@@ -140,20 +142,22 @@ internal class QuoteServiceTest {
 
     @Test
     fun `getAllQuotes should return all quotes when it exists`() {
-        `when`(quoteRepository.findAll()).thenReturn(listOf(quote1, quote2))
+        val pageRequest = PageRequest.of(0, 10)
+        `when`(quoteRepository.findAll(pageRequest)).thenReturn(PageImpl(listOf(quote1, quote2)))
 
-        val response = quoteService.getAllQuotes()
+        val response = quoteService.getAllQuotes(pageRequest)
 
-        assertThat(response.isEmpty()).isFalse
-        assertThat(response).isEqualTo(listOf(quote1, quote2))
+        assertThat(response.isEmpty).isFalse
+        assertThat(response.content).isEqualTo(listOf(quote1, quote2))
     }
 
     @Test
     fun `getAllQuotes should return an empty list when it does not exist`() {
-        `when`(quoteRepository.findAll()).thenReturn(emptyList())
+        val pageRequest = PageRequest.of(0, 10)
+        `when`(quoteRepository.findAll(pageRequest)).thenReturn(PageImpl(emptyList()))
 
-        val response = quoteService.getAllQuotes()
+        val response = quoteService.getAllQuotes(pageRequest)
 
-        assertThat(response.isEmpty()).isTrue
+        assertThat(response.isEmpty).isTrue
     }
 }
